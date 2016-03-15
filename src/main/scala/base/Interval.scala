@@ -12,6 +12,7 @@ case class Interval(val ic: Int, val quality: IntervalQuality) {
   override def toString = quality + ic.toString
 
   //TODO: Can the number of semitones be determined procedurally?
+  //TODO: Add support for Intervals > 8
   def semitones: Int = this match {
     case Interval(1, Perfect) => 0
     case Interval(2, Diminished) => 0
@@ -52,6 +53,9 @@ case class Interval(val ic: Int, val quality: IntervalQuality) {
 
     Pitch(pc, dec, a.octave+oct)
   }
+
+  def invert: Interval = Interval(9-ic, quality.invert)
+  def unary_- = invert
 }
 
 object Interval {
@@ -62,7 +66,20 @@ object Interval {
   }
 }
 
-sealed abstract class IntervalQuality
+sealed abstract class IntervalQuality {
+  import IntervalQuality._
+
+  def invert: IntervalQuality = this match {
+    case Major => Minor
+    case Minor => Major
+    case Perfect => Perfect
+    case Diminished => Augmented
+    case Augmented => Diminished
+  }
+
+  def unary_- = invert
+
+}
 
 object IntervalQuality {
   case object Major extends IntervalQuality {

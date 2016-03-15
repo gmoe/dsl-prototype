@@ -48,7 +48,7 @@ object Structures {
     case object VI extends RomanNum
     case object VII extends RomanNum
 
-    /** TODO: RomanNum has no support for quality (M, m, d, etc.) */
+    /** TODO: RomanNum has no support for quality (M, m, sharp, etc.) */
     def apply(s: String): RomanNum = s.toUpperCase match {
       case "I" => I
       case "II" => II

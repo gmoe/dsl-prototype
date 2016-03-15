@@ -44,4 +44,14 @@ class IntervalSpec extends FlatSpec with Matchers {
     P5.fromPitch(Pitch(B,None,4)) should be (Pitch(F,Sharp,5))
   }
 
+  "Intervals" should "invert to their complement" in {
+    Interval(5,Perfect).invert should be (Interval(4,Perfect))
+    Interval(4,Perfect).invert should be (Interval(5,Perfect))
+
+    Interval(3,Major).invert should be (Interval(6,Minor))
+    Interval(2,Minor).invert should be (Interval(7,Major))
+    
+    Interval(3,Diminished).invert should be (Interval(6,Augmented))
+    Interval(6,Augmented).invert should be (Interval(3,Diminished))
+  }
 }
