@@ -19,10 +19,23 @@ object Structures {
     def midiNumber: Int
   }
 
-  case class Pitch(val pitchClass: PitchClass, 
-    val decorator: PitchDecorator, val octave: Int) extends Primitive {
+  trait IsEnharmonic[A] {
+    def isEnharmonic(that: A): Boolean
+  }
+
+  case class Pitch(val pitchClass: PitchClass, val decorator: PitchDecorator, val octave: Int)
+    extends Primitive 
+    with Ordered[Pitch] 
+    with IsEnharmonic[Pitch] {
+
     override def toString = pitchClass.toString + decorator.toString + "(" + octave + ")"
+
     val midiNumber = octave * 12 + pitchClass.midiNumber + decorator.midiNumber
+
+    def compare(that: Pitch) = this.midiNumber - that.midiNumber
+
+    def isEnharmonic(that: Pitch) = this.midiNumber == that.midiNumber
+
   }
 
   object Pitch {

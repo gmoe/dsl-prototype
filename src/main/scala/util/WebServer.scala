@@ -8,7 +8,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.duration._
 
-object WebServer { //extends App {
+object WebServer extends App {
   implicit val system = ActorSystem("on-spray-can")
   val service = system.actorOf(Props[MyServiceActor], "demo-service")
 

@@ -29,4 +29,9 @@ class ModeSpec extends FlatSpec with Matchers {
     io.VII should be (Pitch(B, Flat, 4))
   }
 
+  "Some modes" should "be enharmonically equivalent" in {
+    (Ionian(Pitch(C, None, 4)).isEnharmonic(Dorian(Pitch(D, None, 4)))) should be (true)
+    (Ionian(Pitch(B, Flat, 4)).isEnharmonic(Dorian(Pitch(C, None, 4)))) should be (true)
+  }
+
 }

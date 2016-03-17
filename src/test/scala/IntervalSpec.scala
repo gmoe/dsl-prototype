@@ -17,8 +17,6 @@ class IntervalSpec extends FlatSpec with Matchers {
     M2.fromPitch(Pitch(B,Flat,4)) should be (Pitch(C,None,5))
     M2.fromPitch(Pitch(B,None,4)) should be (Pitch(C,Sharp,5))
 
-    //println(Pitch(B,Sharp,4).midiNumber + " - " + Pitch(C,DoubleSharp,5).midiNumber)
-
     M2.fromPitch(Pitch(E,Sharp,4)) should be (Pitch(F,DoubleSharp,4))
     M2.fromPitch(Pitch(B,Sharp,4)) should be (Pitch(C,DoubleSharp,5))
   }
