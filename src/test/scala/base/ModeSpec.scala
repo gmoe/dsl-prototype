@@ -2,7 +2,7 @@ package rc.dsl
 
 import org.scalatest._
 
-import Structures._
+import Primitives._
 
 class ModeSpec extends FlatSpec with Matchers {
   import PitchClass._, PitchDecorator._, IntervalQuality._

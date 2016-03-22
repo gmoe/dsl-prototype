@@ -2,6 +2,7 @@ package rc.dsl
 
 import scala.util.parsing.combinator.RegexParsers
 
+import Primitives._
 import Structures._
 
 package object parser {

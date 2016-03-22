@@ -23,4 +23,4 @@ libraryDependencies ++= {
 
 scalacOptions := Seq("-feature", "-deprecation", "-encoding", "utf8")
 
-initialCommands in console := "import rc.dsl._, rc.dsl.Structures._, rc.dsl.parser._"
+initialCommands in console := "import rc.dsl._, rc.dsl.Structures._, rc.dsl.parser._, rc.dsl.Primitives._"

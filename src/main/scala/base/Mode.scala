@@ -1,6 +1,6 @@
 package rc.dsl
 
-import Structures._
+import Primitives._
 
 sealed trait Mode extends IsEnharmonic[Mode] {
   import IntervalQuality._
@@ -23,6 +23,16 @@ sealed trait Mode extends IsEnharmonic[Mode] {
     def flattenOctaves(p:Pitch):Pitch = Pitch(p.pitchClass, p.decorator, 4)
 
     this.degrees.map(flattenOctaves) == that.degrees.map(flattenOctaves)
+  }
+
+  def apply(r: RomanNum): Pitch = r match {
+    case RomanNum.I => this.I
+    case RomanNum.II => this.II
+    case RomanNum.III => this.III
+    case RomanNum.IV => this.IV
+    case RomanNum.V => this.V
+    case RomanNum.VI => this.VI
+    case RomanNum.VII => this.VII
   }
 }
 
@@ -67,7 +77,6 @@ case class Aeolian(val root: Pitch) extends Mode {
     Interval(2, Major), Interval(2, Major), Interval(2, Minor), Interval(2, Major),
     Interval(2, Major))
 }
-
 
 case class Locrian(val root: Pitch) extends Mode {
   import IntervalQuality._

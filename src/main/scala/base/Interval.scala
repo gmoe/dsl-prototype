@@ -1,6 +1,6 @@
 package rc.dsl
 
-import Structures._
+import Primitives._
 
 case class Interval(val ic: Int, val quality: IntervalQuality) {
   import PitchClass._, RomanNum._, PitchDecorator._, IntervalQuality._
