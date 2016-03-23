@@ -39,7 +39,7 @@ object MusicXml {
             <alter>{n.pitch.decorator.midiNumber}</alter>
             <octave>{n.pitch.octave}</octave>
           </pitch>
-          <duration>{(4*this.divisions) / n.duration.denom}</duration>
+          <duration>{(4*divisions) / n.duration.denom}</duration>
           <type>{ n.duration.denom match {
               case 1 => "whole"
               case 2 => "half"
@@ -53,11 +53,7 @@ object MusicXml {
     }
   }
 
-  def makeNode[A <: Music](m: A)(implicit p: MusicXmlGen[A]): Elem = p.parse(m)
-
-  def printTree[A <: Music](m: A*)(implicit p: MusicXmlGen[A]): Seq[Elem] = m.map { p.parse _ }
-  
-  def writeXml[A <: Music](fileName: String, m: A*): Unit = {
+  def writeXml[A <: Music](fileName: String, m: A*)(implicit p: MusicXmlGen[A]): Unit = {
     val xmlOutput = <score-partwise version="3.0">
 			<part-list>
 				<score-part id="P1">
@@ -76,10 +72,7 @@ object MusicXml {
 							<line>2</line>
 						</clef>
 					</attributes>
-          { m.map { _ match { //TODO: Couldn't figure out how to do this better...
-              case p: Pitch => MusicXmlGen.pitch.parse(p)
-              case n: Note => MusicXmlGen.note.parse(n)
-            } }
+          { m.map { p.parse _ }
           }
 				</measure>
 			</part>

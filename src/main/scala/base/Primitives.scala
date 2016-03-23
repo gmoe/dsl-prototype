@@ -24,6 +24,11 @@ object Primitives {
     def ~=(that: A): Boolean = isEnharmonic(that)
   }
 
+  trait CanStream[A] {
+    def stream: Stream[A]
+    def streamFrom(start: A): Stream[A]
+  }
+
   case class Pitch(val pitchClass: PitchClass, val decorator: PitchDecorator, val octave: Int)
     extends Primitive 
     with Ordered[Pitch] 
@@ -54,7 +59,7 @@ object Primitives {
     override def toString: String = s"Measure($timeSig, $music)"
   }
 
-  object RomanNum {
+  object RomanNum extends CanStream[RomanNum] {
     case object I extends RomanNum
     case object II extends RomanNum
     case object III extends RomanNum
@@ -74,10 +79,11 @@ object Primitives {
       case "VII" => VII
     }
 
-    val values = Stream.continually(List(I,II,III,IV,V,VI,VII)).flatten
+    def stream = Stream.continually(List(I,II,III,IV,V,VI,VII)).flatten
+    def streamFrom(start: RomanNum) = stream.drop(stream.indexOf(start))
   }
 
-  object PitchClass {
+  object PitchClass extends CanStream[PitchClass] {
     case object C extends PitchClass {
       override def midiNumber: Int = 0
     }
@@ -110,7 +116,8 @@ object Primitives {
       case "B" => B
     }
 
-    val values = Stream.continually(List(C,D,E,F,G,A,B)).flatten
+    def stream = Stream.continually(List(C,D,E,F,G,A,B)).flatten
+    def streamFrom(start: PitchClass) = stream.drop(stream.indexOf(start))
   }
 
   object PitchDecorator {

@@ -3,7 +3,7 @@ package rc.dsl
 import Primitives._
 
 case class Interval(val ic: Int, val quality: IntervalQuality) {
-  import PitchClass._, RomanNum._, PitchDecorator._, IntervalQuality._
+  import PitchClass._, PitchDecorator._, IntervalQuality._
   require(ic > 0, 
     "Interval must have a valid class (0 < ic <= 8)")
   require(if(quality==Perfect) ic==1||ic==4||ic==5||ic==8 else true,
@@ -43,9 +43,9 @@ case class Interval(val ic: Int, val quality: IntervalQuality) {
   }
 
   def fromPitch(a: Pitch): Pitch = {
-    val oct = if(PitchClass.values.drop(PitchClass.values.indexOf(a.pitchClass)).take(ic
+    val oct = if(PitchClass.streamFrom(a.pitchClass).take(ic
       ).containsSlice(List(PitchClass.B, PitchClass.C))) 1 else 0
-    val pc = PitchClass.values.drop(PitchClass.values.indexOf(a.pitchClass)).apply(ic - 1)
+    val pc = PitchClass.streamFrom(a.pitchClass).apply(ic - 1)
 
     //TODO: Natural in some cases (implicit Mode)
     val pcTones = Pitch(pc,PitchDecorator.None,oct+a.octave).midiNumber - a.midiNumber 
@@ -59,10 +59,39 @@ case class Interval(val ic: Int, val quality: IntervalQuality) {
 }
 
 object Interval {
+
+  import IntervalQuality._
+
+  //TODO: Determine this procedurally, if possible
+  private def findQuality(i: Int): IntervalQuality = i match {
+    case 0 => Perfect
+    case 1 => Minor
+    case 2 => Major
+    case 3 => Minor
+    case 4 => Major
+    case 5 => Perfect
+    case 6 => Diminished
+    case 7 => Perfect
+    case 8 => Minor
+    case 9 => Major
+    case 10 => Minor
+    case 11 => Major
+    case 12 => Perfect
+  }
+
   def apply(a: Pitch, b: Pitch): Interval = {
-    val ic = if(a.pitchClass == b.pitchClass) 1 else
-      PitchClass.values.drop(PitchClass.values.indexOf(a.pitchClass)).indexOf(b.pitchClass)+1
-    Interval(ic, ???) 
+    val hi = List(a,b).max
+    val lo = List(a,b).min
+
+    val ic = {
+      if (a == b) 1 
+      else if(a.pitchClass == b.pitchClass && hi.octave > lo.octave) 8
+      else PitchClass.streamFrom(lo.pitchClass).indexOf(hi.pitchClass)+1
+    }
+
+    val quality = findQuality(hi.midiNumber - lo.midiNumber)
+
+    Interval(ic, quality) 
   }
 }
 
