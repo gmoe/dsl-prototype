@@ -53,6 +53,8 @@ object MusicXml {
     }
   }
 
+  def makeNode[A <: Music](m: A)(implicit p: MusicXmlGen[A]): Elem = p.parse(m)
+
   def writeXml[A <: Music](fileName: String, m: A*)(implicit p: MusicXmlGen[A]): Unit = {
     val xmlOutput = <score-partwise version="3.0">
 			<part-list>

@@ -12,10 +12,10 @@ object Primitives {
 
   sealed trait PitchPrimitive extends Primitive
   sealed abstract class RomanNum extends PitchPrimitive
-  sealed abstract class PitchClass extends PitchPrimitive {
-    def midiNumber: Int
-  }
-  sealed abstract class PitchDecorator {
+  sealed abstract class PitchClass extends PitchPrimitive with HasMidiNumber
+  sealed abstract class PitchDecorator extends HasMidiNumber
+
+  trait HasMidiNumber {
     def midiNumber: Int
   }
 
@@ -30,18 +30,12 @@ object Primitives {
   }
 
   case class Pitch(val pitchClass: PitchClass, val decorator: PitchDecorator, val octave: Int)
-    extends Primitive 
-    with Ordered[Pitch] 
-    with IsEnharmonic[Pitch] {
+    extends Primitive with Ordered[Pitch] with IsEnharmonic[Pitch] with HasMidiNumber {
 
     override def toString = pitchClass.toString + decorator.toString + "(" + octave + ")"
-
-    val midiNumber = octave * 12 + pitchClass.midiNumber + decorator.midiNumber
-
+    def midiNumber = octave * 12 + pitchClass.midiNumber + decorator.midiNumber
     def compare(that: Pitch) = this.midiNumber - that.midiNumber
-
     def isEnharmonic(that: Pitch) = this.midiNumber == that.midiNumber
-
   }
 
   object Pitch {
@@ -123,27 +117,27 @@ object Primitives {
   object PitchDecorator {
     case object None extends PitchDecorator {
       override def toString = ""
-      override def midiNumber: Int = 0
+      def midiNumber: Int = 0
     }
     case object Natural extends PitchDecorator {
       override def toString = "♮ "
-      override def midiNumber: Int = 0
+      def midiNumber: Int = 0
     }
     case object Sharp extends PitchDecorator {
       override def toString = "♯ "
-      override def midiNumber: Int = 1
+      def midiNumber: Int = 1
     }
     case object Flat extends PitchDecorator {
       override def toString = "♭ "
-      override def midiNumber: Int = -1
+      def midiNumber: Int = -1
     }
     case object DoubleSharp extends PitchDecorator {
       override def toString = "𝄪"
-      override def midiNumber: Int = 2
+      def midiNumber: Int = 2
     }
     case object DoubleFlat extends PitchDecorator {
       override def toString = "𝄫"
-      override def midiNumber: Int = -2
+      def midiNumber: Int = -2
     }
 
     def apply(s: String): PitchDecorator = s match {
