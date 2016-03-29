@@ -17,6 +17,10 @@ body {
   text-align: center;
 }
 
+#content textarea {
+  width: 100%;
+}
+
 /*
 #content canvas {
   width: 100%;

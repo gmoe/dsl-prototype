@@ -47,6 +47,9 @@ trait MyService extends HttpService {
               <body>
                 <div id="content">
                   <h1>Example Track</h1>
+
+                  <textarea>//Enter code here...</textarea>
+
                   <canvas></canvas>
                 </div>
 

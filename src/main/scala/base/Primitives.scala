@@ -4,8 +4,12 @@ object Primitives {
 
   sealed trait Music
 
-  sealed case class Beat(num: Int = 1, denom: Int = 4)
-  sealed case class TimeSignature(num: Int = 4, denom: Int = 4)
+  sealed case class Beat(num: Int = 1, denom: Int = 4) {
+    require((denom & (denom-1)) == 0, "Denominator must be a power of two (1,2,4,8,...)")
+  }
+  sealed case class TimeSignature(num: Int = 4, denom: Int = 4) {
+    require((denom & (denom-1)) == 0, "Denominator must be a power of two (1,2,4,8,...)")
+  }
 
   sealed trait Primitive extends Music
   sealed case class Rest() extends Primitive
@@ -32,7 +36,7 @@ object Primitives {
   case class Pitch(val pitchClass: PitchClass, val decorator: PitchDecorator, val octave: Int)
     extends Primitive with Ordered[Pitch] with IsEnharmonic[Pitch] with HasMidiNumber {
 
-    override def toString = pitchClass.toString + decorator.toString + "(" + octave + ")"
+    override def toString = s"$pitchClass$decorator($octave)"
     def midiNumber = octave * 12 + pitchClass.midiNumber + decorator.midiNumber
     def compare(that: Pitch) = this.midiNumber - that.midiNumber
     def isEnharmonic(that: Pitch) = this.midiNumber == that.midiNumber
