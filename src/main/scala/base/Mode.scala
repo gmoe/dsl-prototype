@@ -20,7 +20,7 @@ sealed trait Mode extends IsEnharmonic[Mode] {
   def degrees = Set(I, II, III, IV, V, VI, VII)
 
   def isEnharmonic(that: Mode) = {
-    def flattenOctaves(p:Pitch):Pitch = Pitch(p.pitchClass, p.decorator, 4)
+    def flattenOctaves(p:Pitch) = Pitch(p.pitchClass, p.decorator, 4)
 
     this.degrees.map(flattenOctaves) == that.degrees.map(flattenOctaves)
   }

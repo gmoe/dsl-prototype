@@ -6,9 +6,12 @@ import rc.dsl.Primitives._
 
 class MusicXmlSpec extends FlatSpec with Matchers {
 
+  //Divisions per quarter note
+  val div = 8
+
   "Pitches" should "generate correct XML elements" in {
     //TODO: This passes in all cases??
-    (MusicXml.makeNode(Pitch(PitchClass.C, PitchDecorator.None, 4))) should be
+    (MusicXml.makeNode(Pitch(PitchClass.C, PitchDecorator.None, 4), div)) should be
         (<note>
           <pitch>
             <step>C</step>
@@ -20,7 +23,7 @@ class MusicXmlSpec extends FlatSpec with Matchers {
           <stem>none</stem>
         </note>)
 
-    (MusicXml.makeNode(Pitch(PitchClass.G, PitchDecorator.Sharp, 5))) should be
+    (MusicXml.makeNode(Pitch(PitchClass.G, PitchDecorator.Sharp, 5), div)) should be
         (<note>
           <pitch>
             <step>G</step>

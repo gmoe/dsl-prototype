@@ -5,6 +5,7 @@ import scala.util.parsing.combinator.RegexParsers
 import Primitives._
 import Structures._
 
+/* TODO: Reimplement when API is stable
 package object parser {
 
   object DSLParser extends RegexParsers {
@@ -25,9 +26,10 @@ package object parser {
       case s => s.count(_ == ''') - s.count(_ == ',')
     }
 
-    //def pitch: Parser[Pitch] = (pitchClass|romanNum) ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
-    //  case c ~ d ~ o => Pitch(c, d.getOrElse(PitchDecorator.None), o.getOrElse(0))
-    //}
+    def pitch: Parser[Pitch] = (pitchClass|romanNum) ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
+      case c ~ d ~ o => Pitch(c, d.getOrElse(PitchDecorator.None), o.getOrElse(0))
+    }
+
     def pitch: Parser[Pitch] = (pitchClass) ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
       case c ~ d ~ o => Pitch(c, d.getOrElse(PitchDecorator.None), o.getOrElse(0))
     }
@@ -61,3 +63,4 @@ package object parser {
   }
 
 }
+*/
