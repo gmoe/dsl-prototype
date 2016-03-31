@@ -36,10 +36,24 @@ object Primitives {
   case class Pitch(val pitchClass: PitchClass, val decorator: PitchDecorator, val octave: Int)
     extends Primitive with Ordered[Pitch] with IsEnharmonic[Pitch] with HasMidiNumber {
 
-    override def toString = s"$pitchClass$decorator($octave)"
+    override def toString = s"$pitchClass$decorator${toSubScript(octave)}"
     def midiNumber = octave * 12 + pitchClass.midiNumber + decorator.midiNumber
     def compare(that: Pitch) = this.midiNumber - that.midiNumber
     def isEnharmonic(that: Pitch) = this.midiNumber == that.midiNumber
+    private def toSubScript(i: Int) = i.toString.map { c => c match {
+        case '0' => '\u2080'
+        case '1' => '\u2081'
+        case '2' => '\u2082'
+        case '3' => '\u2083'
+        case '4' => '\u2084'
+        case '5' => '\u2085'
+        case '6' => '\u2086'
+        case '7' => '\u2087'
+        case '8' => '\u2088'
+        case '9' => '\u2089'
+        case _ => ???
+      }
+    }.mkString
   }
 
   object Pitch {
@@ -124,15 +138,15 @@ object Primitives {
       def midiNumber: Int = 0
     }
     case object Natural extends PitchDecorator {
-      override def toString = "♮ "
+      override def toString = "♮"
       def midiNumber: Int = 0
     }
     case object Sharp extends PitchDecorator {
-      override def toString = "♯ "
+      override def toString = "♯"
       def midiNumber: Int = 1
     }
     case object Flat extends PitchDecorator {
-      override def toString = "♭ "
+      override def toString = "♭"
       def midiNumber: Int = -1
     }
     case object DoubleSharp extends PitchDecorator {
@@ -163,24 +177,19 @@ object Primitives {
 
   }
 
-  //TODO: Finalize the syntax for these methods
   implicit class PitchBuilder(val pc: PitchClass) extends AnyVal {
-    def sharp(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Sharp, oct)
-    def ♯(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Sharp, oct)
+    def `bb`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleFlat, oct)
+    def `b`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Flat, oct)
+    def `_`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.None, oct)
+    def `n`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Natural, oct)
     def `#`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Sharp, oct)
-    def flat(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Flat, oct)
-    def sharp2(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleSharp, oct)
-    def flat2(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleFlat, oct)
-    def natural(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Natural, oct)
+    def `##`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleSharp, oct)
 
-    def _1(): Pitch = Pitch(this.pc, PitchDecorator.None, 1)
-    def _2(): Pitch = Pitch(this.pc, PitchDecorator.None, 2)
-    def _3(): Pitch = Pitch(this.pc, PitchDecorator.None, 3)
-    def _4(): Pitch = Pitch(this.pc, PitchDecorator.None, 4)
-    def _5(): Pitch = Pitch(this.pc, PitchDecorator.None, 5)
-    def _6(): Pitch = Pitch(this.pc, PitchDecorator.None, 6)
-    def _7(): Pitch = Pitch(this.pc, PitchDecorator.None, 7)
-    def _8(): Pitch = Pitch(this.pc, PitchDecorator.None, 8)
+    def flat2(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleFlat, oct)
+    def flat(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Flat, oct)
+    def natural(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Natural, oct)
+    def sharp(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Sharp, oct)
+    def sharp2(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleSharp, oct)
   }
 
   implicit class ChordBuilder(val p: Pitch) extends AnyVal {
