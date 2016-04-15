@@ -1,21 +1,22 @@
 package rc.dsl
 
+import scalaz._, Isomorphism._
 import Primitives._
 
-sealed trait Mode extends IsEnharmonic[Mode] {
+sealed trait Mode extends IsoSet[RomanNum, Pitch] with IsEnharmonic[Mode] {
   import IntervalQuality._
 
   def degreeIntervals: List[Interval]
   
   //TODO: Maybe not use Pitch?
-  def root: Pitch
-  def I: Pitch = root
-  def II: Pitch = (degreeIntervals take 1).foldLeft(root) { (c, a) => a.fromPitch(c) }
-  def III: Pitch = (degreeIntervals take 2).foldLeft(root) { (c, a) => a.fromPitch(c) }
-  def IV: Pitch = (degreeIntervals take 3).foldLeft(root) { (c, a) => a.fromPitch(c) }
-  def V: Pitch = (degreeIntervals take 4).foldLeft(root) { (c, a) => a.fromPitch(c) }
-  def VI: Pitch = (degreeIntervals take 5).foldLeft(root) { (c, a) => a.fromPitch(c) }
-  def VII: Pitch = (degreeIntervals take 6).foldLeft(root) { (c, a) => a.fromPitch(c) }
+  val root: Pitch
+  val I: Pitch = root
+  val II: Pitch = (degreeIntervals take 1).foldLeft(root) { (c, a) => a.fromPitch(c) }
+  val III: Pitch = (degreeIntervals take 2).foldLeft(root) { (c, a) => a.fromPitch(c) }
+  val IV: Pitch = (degreeIntervals take 3).foldLeft(root) { (c, a) => a.fromPitch(c) }
+  val V: Pitch = (degreeIntervals take 4).foldLeft(root) { (c, a) => a.fromPitch(c) }
+  val VI: Pitch = (degreeIntervals take 5).foldLeft(root) { (c, a) => a.fromPitch(c) }
+  val VII: Pitch = (degreeIntervals take 6).foldLeft(root) { (c, a) => a.fromPitch(c) }
 
   def degrees = Set(I, II, III, IV, V, VI, VII)
 
@@ -25,7 +26,7 @@ sealed trait Mode extends IsEnharmonic[Mode] {
     this.degrees.map(flattenOctaves) == that.degrees.map(flattenOctaves)
   }
 
-  def apply(r: RomanNum): Pitch = r match {
+  def to: RomanNum => Pitch = {
     case RomanNum.I => this.I
     case RomanNum.II => this.II
     case RomanNum.III => this.III
@@ -33,6 +34,17 @@ sealed trait Mode extends IsEnharmonic[Mode] {
     case RomanNum.V => this.V
     case RomanNum.VI => this.VI
     case RomanNum.VII => this.VII
+  }
+
+  def from: Pitch => RomanNum = {
+    //TODO: This needs to be more robust
+    case this.I => RomanNum.I
+    case this.II => RomanNum.II
+    case this.III => RomanNum.III
+    case this.IV => RomanNum.IV
+    case this.V => RomanNum.V
+    case this.VI => RomanNum.VI
+    case this.VII => RomanNum.VII
   }
 }
 

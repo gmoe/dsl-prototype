@@ -93,6 +93,21 @@ object Interval {
 
     Interval(ic, quality) 
   }
+
+  def apply(i: Int): Interval = {
+    require(i > 0 && i <= 12, "Interval steps in semitones must be between 0 and 12.") 
+    val ic = i match {
+      case 0 => 1
+      case 1 | 2 => 2
+      case 3 | 4 => 3
+      case 5 => 4
+      case 6 | 7 => 5
+      case 8 | 9 => 6
+      case 10 | 11 => 7
+      case 12 => 8
+    }
+    Interval(ic, findQuality(i))
+  }
 }
 
 sealed abstract class IntervalQuality {

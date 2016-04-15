@@ -4,11 +4,17 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
+val scalazVersion = "7.1.0"
+
 libraryDependencies ++= {
   val akkaV = "2.3.9"
   val sprayV = "1.3.3"
 
   Seq(
+    "org.scalaz" %% "scalaz-core" % scalazVersion,
+    "org.scalaz" %% "scalaz-effect" % scalazVersion,
+    "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
+    "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
     "de.sciss" %% "scalamidi" % "0.2.0",
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scalactic" %% "scalactic" % "2.2.6",

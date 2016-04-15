@@ -33,8 +33,9 @@ object Primitives {
     def streamFrom(start: A): Stream[A]
   }
 
-  case class Pitch(val pitchClass: PitchClass, val decorator: PitchDecorator, val octave: Int)
-    extends Primitive with Ordered[Pitch] with IsEnharmonic[Pitch] with HasMidiNumber {
+  final case class Pitch(val pitchClass: PitchClass, val decorator: PitchDecorator, 
+    val octave: Int) extends Primitive with Ordered[Pitch] with IsEnharmonic[Pitch] 
+    with HasMidiNumber {
 
     override def toString = s"$pitchClass$decorator${toSubScript(octave)}"
     def midiNumber = octave * 12 + pitchClass.midiNumber + decorator.midiNumber
@@ -56,29 +57,23 @@ object Primitives {
     }.mkString
   }
 
-  object Pitch {
-    def apply(pc: PitchClass, oct: Int): Pitch = Pitch(pc, PitchDecorator.None, oct)
-  }
+  case class Note(duration: Beat, pitch: Pitch) extends Music
 
-  //TODO: Possibly support RomanNums
-  case class Note(val pitch: Pitch, val duration: Beat) extends Music
-
-  /* Sequencing/Chaining Notes ((C4 -+- E4 -+- G4) == Measure(C4 E4 G4))
-   * should be injected by monoids)
-   */
-  case class Measure(timeSig: TimeSignature, music: Music*) extends Music with Traversable[Music] {
-    override def foreach[U](f: Music => U) = music foreach f
-    override def toString: String = s"Measure($timeSig, $music)"
+  case class Chord(duration: Beat, pitches: Pitch*) extends Music {
+    def invert: Chord = {
+      val inv = Interval(8, IntervalQuality.Perfect).fromPitch(pitches.sorted.head)
+      Chord(duration, (pitches.sorted.drop(1) :+ inv):_*)
+    }
   }
 
   object RomanNum extends CanStream[RomanNum] {
-    case object I extends RomanNum
-    case object II extends RomanNum
-    case object III extends RomanNum
-    case object IV extends RomanNum
-    case object V extends RomanNum
-    case object VI extends RomanNum
-    case object VII extends RomanNum
+    final case object I extends RomanNum
+    final case object II extends RomanNum
+    final case object III extends RomanNum
+    final case object IV extends RomanNum
+    final case object V extends RomanNum
+    final case object VI extends RomanNum
+    final case object VII extends RomanNum
 
     /** TODO: RomanNum has no support for quality (M, m, sharp, etc.) */
     def apply(s: String): RomanNum = s.toUpperCase match {
@@ -96,25 +91,25 @@ object Primitives {
   }
 
   object PitchClass extends CanStream[PitchClass] {
-    case object C extends PitchClass {
+    final case object C extends PitchClass {
       override def midiNumber: Int = 0
     }
-    case object D extends PitchClass {
+    final case object D extends PitchClass {
       override def midiNumber: Int = 2
     }
-    case object E extends PitchClass {
+    final case object E extends PitchClass {
       override def midiNumber: Int = 4
     }
-    case object F extends PitchClass {
+    final case object F extends PitchClass {
       override def midiNumber: Int = 5
     }
-    case object G extends PitchClass {
+    final case object G extends PitchClass {
       override def midiNumber: Int = 7
     }
-    case object A extends PitchClass {
+    final case object A extends PitchClass {
       override def midiNumber: Int = 9
     }
-    case object B extends PitchClass {
+    final case object B extends PitchClass {
       override def midiNumber: Int = 11
     }
 
@@ -133,27 +128,27 @@ object Primitives {
   }
 
   object PitchDecorator {
-    case object None extends PitchDecorator {
+    final case object None extends PitchDecorator {
       override def toString = ""
       def midiNumber: Int = 0
     }
-    case object Natural extends PitchDecorator {
+    final case object Natural extends PitchDecorator {
       override def toString = "♮"
       def midiNumber: Int = 0
     }
-    case object Sharp extends PitchDecorator {
+    final case object Sharp extends PitchDecorator {
       override def toString = "♯"
       def midiNumber: Int = 1
     }
-    case object Flat extends PitchDecorator {
+    final case object Flat extends PitchDecorator {
       override def toString = "♭"
       def midiNumber: Int = -1
     }
-    case object DoubleSharp extends PitchDecorator {
+    final case object DoubleSharp extends PitchDecorator {
       override def toString = "𝄪"
       def midiNumber: Int = 2
     }
-    case object DoubleFlat extends PitchDecorator {
+    final case object DoubleFlat extends PitchDecorator {
       override def toString = "𝄫"
       def midiNumber: Int = -2
     }
@@ -190,19 +185,6 @@ object Primitives {
     def natural(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Natural, oct)
     def sharp(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Sharp, oct)
     def sharp2(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleSharp, oct)
-  }
-
-  implicit class ChordBuilder(val p: Pitch) extends AnyVal {
-    import IntervalQuality._
-
-    def P5(): List[Pitch] = p :: Interval(5, Perfect).fromPitch(p) :: Nil
-
-    def majTriad: List[Pitch] = p :: Interval(3, Major).fromPitch(p) ::
-      Interval(5, Perfect).fromPitch(p) :: Nil
-
-    def minTriad: List[Pitch] = p :: Interval(3, Minor).fromPitch(p) ::
-      Interval(5, Perfect).fromPitch(p) :: Nil
-
   }
 
 }

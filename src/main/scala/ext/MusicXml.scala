@@ -36,7 +36,7 @@ object MusicXml {
             <alter>{n.pitch.decorator.midiNumber}</alter>
             <octave>{n.pitch.octave}</octave>
           </pitch>
-          <duration>{ (divisions*4) / n.duration.denom  }</duration>
+          <duration>{(divisions*4)/n.duration.denom}</duration>
           <type>{ n.duration.denom match {
               case 1 => "whole"
               case 2 => "half"
@@ -44,6 +44,8 @@ object MusicXml {
               case 8 => "eighth"
               case 16 => "16th"
               case 32 => "32nd"
+              case 64 => "64th"
+              case 128 => "128th"
             } }</type>
         </note>
       }
@@ -80,7 +82,9 @@ object MusicXml {
 							<line>2</line>
 						</clef>
 					</attributes>
-          { m.map { p.parse(_, divisions) }
+          { m.map { 
+              p.parse(_, divisions) 
+            }
           }
 				</measure>
 			</part>
