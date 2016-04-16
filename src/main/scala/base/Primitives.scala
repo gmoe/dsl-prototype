@@ -14,9 +14,20 @@ object Primitives {
   sealed trait Primitive extends Music
   sealed case class Rest() extends Primitive
 
-  sealed trait PitchPrimitive extends Primitive
-  sealed abstract class RomanNum extends PitchPrimitive
-  sealed abstract class PitchClass extends PitchPrimitive with HasMidiNumber
+  sealed abstract class PitchPrimitive(val decorator: PitchDecorator, val octave: Int) 
+  extends Primitive {
+    require(octave >= 0 && octave <= 8, "Octave range limited to 0 - 8")
+
+    protected def toSubScript(i: Int) = i.toString.map { c => c match {
+        case '0' => '\u2080'; case '1' => '\u2081'; case '2' => '\u2082';
+        case '3' => '\u2083'; case '4' => '\u2084'; case '5' => '\u2085';
+        case '6' => '\u2086'; case '7' => '\u2087'; case '8' => '\u2088';
+        case '9' => '\u2089'
+      }
+    }.mkString
+  }
+  sealed abstract class RomanNum
+  sealed abstract class PitchClass extends HasMidiNumber
   sealed abstract class PitchDecorator extends HasMidiNumber
 
   trait HasMidiNumber {
@@ -33,28 +44,20 @@ object Primitives {
     def streamFrom(start: A): Stream[A]
   }
 
-  final case class Pitch(val pitchClass: PitchClass, val decorator: PitchDecorator, 
-    val octave: Int) extends Primitive with Ordered[Pitch] with IsEnharmonic[Pitch] 
-    with HasMidiNumber {
+  final case class Pitch(val pitchClass: PitchClass, override val decorator: PitchDecorator, 
+    override val octave: Int) extends PitchPrimitive(decorator, octave) with Ordered[Pitch] 
+    with IsEnharmonic[Pitch] with HasMidiNumber {
 
     override def toString = s"$pitchClass$decorator${toSubScript(octave)}"
     def midiNumber = octave * 12 + pitchClass.midiNumber + decorator.midiNumber
     def compare(that: Pitch) = this.midiNumber - that.midiNumber
     def isEnharmonic(that: Pitch) = this.midiNumber == that.midiNumber
-    private def toSubScript(i: Int) = i.toString.map { c => c match {
-        case '0' => '\u2080'
-        case '1' => '\u2081'
-        case '2' => '\u2082'
-        case '3' => '\u2083'
-        case '4' => '\u2084'
-        case '5' => '\u2085'
-        case '6' => '\u2086'
-        case '7' => '\u2087'
-        case '8' => '\u2088'
-        case '9' => '\u2089'
-        case _ => ???
-      }
-    }.mkString
+  }
+
+  final case class RomanPitch(val romanNum: RomanNum, override val decorator: PitchDecorator,
+    override val octave: Int) extends PitchPrimitive(decorator, octave) {
+
+    override def toString = s"$romanNum$decorator${toSubScript(octave)}"
   }
 
   case class Note(duration: Beat, pitch: Pitch) extends Music
@@ -179,6 +182,7 @@ object Primitives {
     def `n`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Natural, oct)
     def `#`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Sharp, oct)
     def `##`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleSharp, oct)
+    def `x`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleSharp, oct)
 
     def flat2(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleFlat, oct)
     def flat(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Flat, oct)
@@ -187,4 +191,20 @@ object Primitives {
     def sharp2(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleSharp, oct)
   }
 
+  //TODO: Possible use for Scala macros?
+  implicit class RomanPitchBuilder(val rn: RomanNum) extends AnyVal {
+    def `bb`(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.DoubleFlat, oct)
+    def `b`(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.Flat, oct)
+    def `_`(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.None, oct)
+    def `n`(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.Natural, oct)
+    def `#`(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.Sharp, oct)
+    def `##`(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.DoubleSharp, oct)
+    def `x`(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.DoubleSharp, oct)
+
+    def flat2(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.DoubleFlat, oct)
+    def flat(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.Flat, oct)
+    def natural(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.Natural, oct)
+    def sharp(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.Sharp, oct)
+    def sharp2(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.DoubleSharp, oct)
+  }
 }
