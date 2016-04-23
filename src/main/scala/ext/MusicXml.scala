@@ -15,6 +15,16 @@ object MusicXml {
 
   trait MusicXmlGen[A <: Music] {
     def parse(obj: A, divisions: Int): Elem
+    def beatDuration(i: Int): String = i match {
+      case 1 => "whole"
+      case 2 => "half"
+      case 4 => "quarter"
+      case 8 => "eighth"
+      case 16 => "16th"
+      case 32 => "32nd"
+      case 64 => "64th"
+      case 128 => "128th"
+    }
   }
   
   object MusicXmlGen {
@@ -47,6 +57,16 @@ object MusicXml {
       }
     }
 
+    implicit val rest = new MusicXmlGen[Rest] {
+      def parse(r: Rest, divisions: Int): Elem = {
+        <note>
+          <rest/>
+          <duration>{(divisions*4)/r.duration.denom}</duration>
+          <type>{beatDuration(r.duration.denom)}</type>
+        </note>
+      }
+    }
+
     implicit val note = new MusicXmlGen[Note] {
       def parse(n: Note, divisions: Int): Elem = {
         <note>
@@ -56,16 +76,7 @@ object MusicXml {
             <octave>{n.pitch.octave}</octave>
           </pitch>
           <duration>{(divisions*4)/n.duration.denom}</duration>
-          <type>{ n.duration.denom match {
-              case 1 => "whole"
-              case 2 => "half"
-              case 4 => "quarter"
-              case 8 => "eighth"
-              case 16 => "16th"
-              case 32 => "32nd"
-              case 64 => "64th"
-              case 128 => "128th"
-            } }</type>
+          <type>{beatDuration(n.duration.denom)}</type>
         </note>
       }
     }
@@ -76,6 +87,7 @@ object MusicXml {
   private def countDivisions[A <: Music](music: A*): Int = music.foldLeft(1) {
     (m, x) => x match {
       case n: Note => (n.duration.denom/4) max m
+      case r: Rest => (r.duration.denom/4) max m
       case p: Pitch => 1 max m
     }
   }

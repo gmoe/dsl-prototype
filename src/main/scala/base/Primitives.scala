@@ -8,6 +8,8 @@ object Primitives {
     require((fractValue._2 & (fractValue._2-1)) == 0, "Denominator must be a power of two.")
     val num: Int = fractValue._1
     val denom: Int = fractValue._2
+
+    def dot: DottedBeat = DottedBeat(this)
   }
 
   final case class DottedBeat(beat: Beat) extends Beat((beat.num+2, beat.denom*2)) 
@@ -41,7 +43,7 @@ object Primitives {
   }
 
   sealed trait Primitive extends Music
-  sealed case class Rest() extends Primitive
+  sealed case class Rest(duration: Beat) extends Primitive
 
   sealed abstract class PitchPrimitive(val decorator: PitchDecorator, val octave: Int) 
   extends Primitive {

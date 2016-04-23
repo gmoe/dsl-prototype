@@ -4,18 +4,14 @@ import rc.dsl.Primitives._
 
 object Structures {
   // TODO: Considering implementing...
-  // Measure
   // Part/Voice
   // Chord
   
-  /* Sequencing/Chaining Notes ((C4 -+- E4 -+- G4) == Measure(C4 E4 G4))
-   * should be injected by monoids)
-   */
   sealed trait MeasureMarker extends Music
-  final case object `|`
-  final case object `|:`
-  final case object `:|`
-  final case object `:|:`
+  final case object `|` extends MeasureMarker
+  final case object `|:` extends MeasureMarker
+  final case object `:|` extends MeasureMarker
+  final case object `:|:` extends MeasureMarker
 
   case class Measure(timeSig: TimeSignature, music: Note*) {
     require(isFullMeasure(timeSig, music:_*), "Measure has to be complete.")
