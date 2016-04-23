@@ -3,7 +3,7 @@ package rc.dsl
 import scalaz._, Isomorphism._
 import Primitives._
 
-sealed trait Mode extends IsoSet[RomanPitch, Pitch] with IsEnharmonic[Mode] {
+sealed trait Mode extends Music with IsoSet[RomanPitch, Pitch] with IsEnharmonic[Mode] {
   import IntervalQuality._
 
   val root: Pitch
@@ -15,7 +15,7 @@ sealed trait Mode extends IsoSet[RomanPitch, Pitch] with IsEnharmonic[Mode] {
   val VI: Pitch = (degreeIntervals take 5).foldLeft(root) { (c, a) => a.fromPitch(c) }
   val VII: Pitch = (degreeIntervals take 6).foldLeft(root) { (c, a) => a.fromPitch(c) }
 
-  def degrees = Set(I, II, III, IV, V, VI, VII)
+  def degrees: Set[Pitch] = Set(I, II, III, IV, V, VI, VII)
   def degreeIntervals: List[Interval]
 
   def isEnharmonic(that: Mode) = {

@@ -62,7 +62,7 @@ class ModeSpec extends FlatSpec with Matchers {
     dorianC.to(RomanPitch(III, DoubleSharp, 4)) should be (Pitch(E, Sharp, 4))
   }
 
-  "Transposition" should "result in correct note spellings" in {
+  "Modulation" should "result in correct note spellings" in {
     val majorC = Ionian(Pitch(C, None, 4))
     val majorBb = Ionian(Pitch(B, Flat, 4))
 

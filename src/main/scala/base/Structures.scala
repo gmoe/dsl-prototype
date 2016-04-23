@@ -11,11 +11,19 @@ object Structures {
   /* Sequencing/Chaining Notes ((C4 -+- E4 -+- G4) == Measure(C4 E4 G4))
    * should be injected by monoids)
    */
-  def |(timeSig: TimeSignature, music: Primitive*): Measure = Measure(timeSig, music:_*)
+  sealed trait MeasureMarker extends Music
+  final case object `|`
+  final case object `|:`
+  final case object `:|`
+  final case object `:|:`
 
-  case class Measure(timeSig: TimeSignature, music: Primitive*) {
-
+  case class Measure(timeSig: TimeSignature, music: Note*) {
+    require(isFullMeasure(timeSig, music:_*), "Measure has to be complete.")
   }
+
+  def isFullMeasure(ts: TimeSignature, music: Note*): Boolean = music.foldLeft(0.0) { 
+    case (sum, note) => sum + note.duration.num.toDouble / note.duration.denom.toDouble
+  } == (ts.num.toDouble / ts.denom.toDouble)
 
   implicit class SeqEnriched[A](val value: Seq[A]) extends AnyVal {
     def rotate(i: Int) = value.drop(i) ++ value.take(i)

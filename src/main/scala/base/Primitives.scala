@@ -2,12 +2,41 @@ package rc.dsl
 
 object Primitives {
 
-  sealed trait Music
+  trait Music
 
-  sealed case class Beat(num: Int = 1, denom: Int = 4) {
-    require((denom & (denom-1)) == 0, "Denominator must be a power of two (1,2,4,8,...)")
+  sealed abstract class Beat(fractValue: (Int,Int)) {
+    require((fractValue._2 & (fractValue._2-1)) == 0, "Denominator must be a power of two.")
+    val num: Int = fractValue._1
+    val denom: Int = fractValue._2
   }
-  sealed case class TimeSignature(num: Int = 4, denom: Int = 4) {
+
+  final case class DottedBeat(beat: Beat) extends Beat((beat.num+2, beat.denom*2)) 
+
+  object Beat {
+    final case object Whole extends Beat((1,1))
+    final case object Half extends Beat((1,2))
+    final case object Quarter extends Beat((1,4))
+    final case object Eighth extends Beat((1,8))
+    final case object Sixteenth extends Beat((1,16))
+    final case object ThirtySecond extends Beat((1,32))
+    final case object SixtyFourth extends Beat((1,64))
+    final case object HundredTwentyEighth extends Beat((1,128))
+    final case object TwoHundredFiftySixth extends Beat((1,256))
+
+    def apply(i: Int): Beat = i match {
+      case 1 => Whole
+      case 2 => Half
+      case 4 => Quarter
+      case 8 => Eighth
+      case 16 => Sixteenth
+      case 32 => ThirtySecond
+      case 64 => SixtyFourth
+      case 128 => HundredTwentyEighth
+      case 256 => TwoHundredFiftySixth
+    }
+  }
+
+  sealed case class TimeSignature(num: Int, denom: Int) {
     require((denom & (denom-1)) == 0, "Denominator must be a power of two (1,2,4,8,...)")
   }
 
@@ -60,7 +89,7 @@ object Primitives {
     override def toString = s"$romanNum$decorator${toSubScript(octave)}"
   }
 
-  case class Note(duration: Beat, pitch: Pitch) extends Music
+  case class Note(pitch: Pitch, duration: Beat) extends Music
 
   case class Chord(duration: Beat, pitches: Pitch*) extends Music {
     def invert: Chord = {

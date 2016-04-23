@@ -1,10 +1,15 @@
 package rc.dsl.ext
 
+import rc.dsl._
 import rc.dsl.Primitives._
 import rc.dsl.Structures._
 
 import scala.xml._
 import scala.xml.dtd.{DocType, PublicID}
+
+import scalaz._
+import effect._
+import IO._
 
 object MusicXml {
 
@@ -13,6 +18,20 @@ object MusicXml {
   }
   
   object MusicXmlGen {
+
+    implicit val mode = new MusicXmlGen[Mode] {
+      def parse(m: Mode, divisions: Int): Elem = {
+        <key>
+          <fifths>{ m.degrees.foldLeft(0) {
+            (a,c) => c match {
+              case Pitch(_,PitchDecorator.Flat,_) => a - 1
+              case Pitch(_,PitchDecorator.Sharp,_) => a + 1
+            }
+          }}</fifths>
+        </key>
+      }
+    }
+
     implicit val pitch = new MusicXmlGen[Pitch] {
       def parse(p: Pitch, divisions: Int): Elem = {
         <note>
