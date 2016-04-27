@@ -4,6 +4,20 @@ object Primitives {
 
   trait Music
 
+  trait HasMidiNumber {
+    def midiNumber: Int
+  }
+
+  trait IsEnharmonic[A] {
+    def isEnharmonic(that: A): Boolean
+    def ~=(that: A): Boolean = isEnharmonic(that)
+  }
+
+  trait CanStream[A] {
+    def stream: Stream[A]
+    def streamFrom(start: A): Stream[A]
+  }
+
   sealed abstract class Beat(fractValue: (Int,Int)) {
     require((fractValue._2 & (fractValue._2-1)) == 0, "Denominator must be a power of two.")
     val num: Int = fractValue._1
@@ -11,8 +25,6 @@ object Primitives {
 
     def dot: DottedBeat = DottedBeat(this)
   }
-
-  final case class DottedBeat(beat: Beat) extends Beat((beat.num+2, beat.denom*2)) 
 
   object Beat {
     final case object Whole extends Beat((1,1))
@@ -38,12 +50,16 @@ object Primitives {
     }
   }
 
-  sealed case class TimeSignature(num: Int, denom: Int) {
+  final case class DottedBeat(beat: Beat) extends Beat((beat.num+2, beat.denom*2)) 
+
+  sealed case class TimeSignature(num: Int, denom: Int) extends Music {
     require((denom & (denom-1)) == 0, "Denominator must be a power of two (1,2,4,8,...)")
   }
 
   sealed trait Primitive extends Music
-  sealed case class Rest(duration: Beat) extends Primitive
+  sealed abstract class RomanNum
+  sealed abstract class PitchClass extends HasMidiNumber
+  sealed abstract class PitchDecorator extends HasMidiNumber
 
   sealed abstract class PitchPrimitive(val decorator: PitchDecorator, val octave: Int) 
   extends Primitive {
@@ -56,23 +72,6 @@ object Primitives {
         case '9' => '\u2089'
       }
     }.mkString
-  }
-  sealed abstract class RomanNum
-  sealed abstract class PitchClass extends HasMidiNumber
-  sealed abstract class PitchDecorator extends HasMidiNumber
-
-  trait HasMidiNumber {
-    def midiNumber: Int
-  }
-
-  trait IsEnharmonic[A] {
-    def isEnharmonic(that: A): Boolean
-    def ~=(that: A): Boolean = isEnharmonic(that)
-  }
-
-  trait CanStream[A] {
-    def stream: Stream[A]
-    def streamFrom(start: A): Stream[A]
   }
 
   final case class Pitch(val pitchClass: PitchClass, override val decorator: PitchDecorator, 
@@ -90,6 +89,8 @@ object Primitives {
 
     override def toString = s"$romanNum$decorator${toSubScript(octave)}"
   }
+
+  case class Rest(duration: Beat) extends Primitive
 
   case class Note(pitch: Pitch, duration: Beat) extends Music
 
@@ -222,7 +223,6 @@ object Primitives {
     def sharp2(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleSharp, oct)
   }
 
-  //TODO: Possible use for Scala macros?
   implicit class RomanPitchBuilder(val rn: RomanNum) extends AnyVal {
     def `bb`(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.DoubleFlat, oct)
     def `b`(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.Flat, oct)

@@ -7,10 +7,6 @@ import rc.dsl.Structures._
 import scala.xml._
 import scala.xml.dtd.{DocType, PublicID}
 
-import scalaz._
-import effect._
-import IO._
-
 object MusicXml {
 
   trait MusicXmlGen[A <: Music] {

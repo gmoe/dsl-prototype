@@ -18,7 +18,7 @@ class ModeSpec extends FlatSpec with Matchers {
     majorC.VII should be (Pitch(B, None, 4))
   }
 
-  "Ionian mode" should "result in correct degrees using to()" in {
+  it should "result in correct degrees using to()" in {
     val majorC = Ionian(Pitch(C, None, 4))
     
     majorC.to(RomanPitch(I, None, 4)) should be (Pitch(C, None, 4))
@@ -35,7 +35,7 @@ class ModeSpec extends FlatSpec with Matchers {
     majorC.to(RomanPitch(I, DoubleFlat, 4)) should be (Pitch(C, DoubleFlat, 4))
   }
 
-  "Dorian mode" should "result in correct degrees" in {
+  "Dorian mode" should "result in correct degrees using cached values" in {
     val dorianC = Dorian(Pitch(C, None,4))
     dorianC.I should be (Pitch(C, None, 4))
     dorianC.II should be (Pitch(D, None, 4))
@@ -46,7 +46,7 @@ class ModeSpec extends FlatSpec with Matchers {
     dorianC.VII should be (Pitch(B, Flat, 4))
   }
 
-  "Dorian mode" should "result in correct degrees using to()" in {
+  it should "result in correct degrees using to()" in {
     val dorianC = Dorian(Pitch(C, None, 4))
 
     dorianC.to(RomanPitch(I, None, 4)) should be (Pitch(C, None, 4))
