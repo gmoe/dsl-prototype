@@ -6,6 +6,8 @@ scalaVersion := "2.11.8"
 
 val scalazVersion = "7.1.0"
 
+resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+
 libraryDependencies ++= {
   val akkaV = "2.3.9"
   val sprayV = "1.3.3"
@@ -19,6 +21,8 @@ libraryDependencies ++= {
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
     "org.scalactic" %% "scalactic" % "2.2.6",
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
+    "org.specs2" %% "specs2-core" % "3.0" % "test",
+    "org.specs2" %% "specs2-matcher-extra" % "3.0" % "test",
     "io.spray"            %%  "spray-can"     % sprayV,
     "io.spray"            %%  "spray-routing" % sprayV,
     "io.spray"            %%  "spray-testkit" % sprayV  % "test",
@@ -28,5 +32,7 @@ libraryDependencies ++= {
 }
 
 scalacOptions := Seq("-feature", "-deprecation", "-encoding", "utf8")
+
+scalacOptions in Test ++= Seq("-Yrangepos")
 
 initialCommands in console := "import rc.dsl._, rc.dsl.Structures._, rc.dsl.Primitives._, rc.dsl.Primitives.PitchClass._"
