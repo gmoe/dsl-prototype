@@ -29,7 +29,7 @@ object MusicXml {
       def parse(m: Mode, divisions: Int): Elem = {
         <key>
           <fifths>{ m.degrees.foldLeft(0) {
-            (a,c) => c match {
+            (a,c) => c match { //TODO: This is fruitless for non-major/minor
               case Pitch(_,PitchDecorator.Flat,_) => a - 1
               case Pitch(_,PitchDecorator.Sharp,_) => a + 1
             }

@@ -68,9 +68,30 @@ class IntervalSpec extends FlatSpec with Matchers {
     P5.fromPitch(Pitch(C,None,4)) should be (Pitch(G,None,4))
     P5.fromPitch(Pitch(D,Sharp,4)) should be (Pitch(A,Sharp,4))
     P5.fromPitch(Pitch(E,Flat,4)) should be (Pitch(B,Flat,4))
+    P5.fromPitch(Pitch(F,None,4)) should be (Pitch(C,None,5))
 
     P5.fromPitch(Pitch(B,Flat,4)) should be (Pitch(F,None,5))
     P5.fromPitch(Pitch(B,None,4)) should be (Pitch(F,Sharp,5))
+  }
+
+  "Diminished fifth" should "result in correct notes" in {
+    val d5 = Interval(5, Diminished)
+    d5.fromPitch(C`_`4) should be (G`b`4)
+    d5.fromPitch(B`b`4) should be (F`b`5)
+    d5.fromPitch(F`b`4) should be (C`bb`5)
+    d5.fromPitch(D`b`4) should be (A`bb`4)
+    d5.fromPitch(E`x`4) should be (B`#`4)
+  }
+
+  "Perfect 12th" should "result in correct notes" in {
+    val P12 = Interval(12, Perfect)
+    P12.fromPitch(C`_`4) should be (G`_`5)
+    P12.fromPitch(E`b`4) should be (B`b`5)
+    P12.fromPitch(D`#`4) should be (A`#`5)
+
+    P12.fromPitch(F`_`4) should be (C`_`6)
+    P12.fromPitch(B`b`4) should be (F`_`6)
+    P12.fromPitch(B`_`4) should be (F`#`6)
   }
 
 }

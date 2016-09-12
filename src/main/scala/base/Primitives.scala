@@ -14,8 +14,10 @@ object Primitives {
   }
 
   trait CanStream[A] {
-    def stream: Stream[A]
-    def streamFrom(start: A): Stream[A]
+    def streamForward: Stream[A]
+    def streamForward(start: A): Stream[A]
+    def streamBackward: Stream[A]
+    def streamBackward(start: A): Stream[A]
   }
 
   sealed abstract class Beat(fractValue: (Int,Int)) {
@@ -121,8 +123,10 @@ object Primitives {
       case "VII" => VII
     }
 
-    def stream = Stream.continually(List(I,II,III,IV,V,VI,VII)).flatten
-    def streamFrom(start: RomanNum) = stream.drop(stream.indexOf(start))
+    def streamForward = Stream.continually(List(I,II,III,IV,V,VI,VII)).flatten
+    def streamForward(start: RomanNum) = streamForward.drop(streamForward.indexOf(start))
+    def streamBackward = Stream.continually(List(VII,VI,V,IV,III,II,I)).flatten
+    def streamBackward(start: RomanNum) = streamBackward.drop(streamBackward.indexOf(start))
   }
 
   object PitchClass extends CanStream[PitchClass] {
@@ -158,8 +162,10 @@ object Primitives {
       case "B" => B
     }
 
-    def stream = Stream.continually(List(C,D,E,F,G,A,B)).flatten
-    def streamFrom(start: PitchClass) = stream.drop(stream.indexOf(start))
+    def streamForward = Stream.continually(List(C,D,E,F,G,A,B)).flatten
+    def streamForward(start: PitchClass) = streamForward.drop(streamForward.indexOf(start))
+    def streamBackward = Stream.continually(List(B,A,G,F,E,D,C)).flatten
+    def streamBackward(start: PitchClass) = streamBackward.drop(streamBackward.indexOf(start))
   }
 
   object PitchDecorator {
@@ -197,12 +203,15 @@ object Primitives {
       case "_" => DoubleFlat
     }
 
-    def apply(i: Int): PitchDecorator = i match {
-      case -2 => DoubleFlat
-      case -1 => Flat
-      case 0 => None 
-      case 1 => Sharp
-      case 2 => DoubleSharp
+    def apply(i: Int): PitchDecorator = {
+      require(-2 <= i && i <= 2, "Invalid PitchDecorator argument.")
+      i match {
+        case -2 => DoubleFlat
+        case -1 => Flat
+        case 0 => None
+        case 1 => Sharp
+        case 2 => DoubleSharp
+      }
     }
 
   }
