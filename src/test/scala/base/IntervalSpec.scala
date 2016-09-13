@@ -94,4 +94,15 @@ class IntervalSpec extends FlatSpec with Matchers {
     P12.fromPitch(B`_`4) should be (F`#`6)
   }
 
+  "Negative major second" should "result in correct notes" in {
+    val negM2 = Interval(-2, Major)
+    negM2.fromPitch(D`_`4) should be (C`_`4)
+    negM2.fromPitch(E`b`4) should be (D`b`4)
+    negM2.fromPitch(G`#`4) should be (F`#`4)
+
+    negM2.fromPitch(C`_`4) should be (B`b`3)
+    negM2.fromPitch(C`#`4) should be (B`_`3)
+    negM2.fromPitch(C`b`4) should be (B`bb`3)
+  }
+
 }

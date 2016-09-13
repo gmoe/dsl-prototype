@@ -12,8 +12,7 @@ case class Interval(val ic: Int, val quality: IntervalQuality) {
 
   override def toString = s"${if(ic < 0) "-" else ""}$quality${Math.abs(ic)}"
 
-  //TODO: Add support for Intervals > 8, negatives
-  def semitones: Int = this match {
+  def semitones: Int = if(ic > 0) this match {
     case Interval(1, Perfect) => 0; case Interval(2, Diminished) => 0
     case Interval(2, Minor) => 1; case Interval(1, Augmented) => 1
     case Interval(2, Major) => 2; case Interval(3, Diminished) => 2
@@ -40,19 +39,32 @@ case class Interval(val ic: Int, val quality: IntervalQuality) {
     case Interval(14, Minor) => 22; case Interval(13, Augmented) => 22
     case Interval(14, Major) => 23; case Interval(15, Diminished) => 23
     case Interval(15, Perfect) => 24; case Interval(14, Augmented) => 24
-  }
+  } else (-this.negate.semitones)
 
   def fromPitch(a: Pitch): Pitch = {
-    val pc = PitchClass.streamForward(a.pitchClass).apply(ic - 1)
+    if(ic > 0) {
+      val pc = PitchClass.streamForward(a.pitchClass).apply(ic - 1)
 
-    val oct = PitchClass.streamForward(a.pitchClass).take(ic).toList.sliding(2,1).count(
-      x => x == List(B,C))
+      val oct = PitchClass.streamForward(a.pitchClass).take(ic).toList.sliding(2,1).count(
+        x => x == List(B,C))
 
-    //TODO: Natural in some cases (implicit Mode)
-    val pcTones = Pitch(pc,PitchDecorator.None,oct+a.octave).midiNumber - a.midiNumber 
-    val dec = PitchDecorator(this.semitones - pcTones)
+      //TODO: Natural in some cases (implicit Mode)
+      val pcTones = Pitch(pc,PitchDecorator.None,oct+a.octave).midiNumber - a.midiNumber
+      val dec = PitchDecorator(this.semitones - pcTones)
 
-    Pitch(pc, dec, a.octave+oct)
+      return Pitch(pc, dec, a.octave+oct)
+    } else {
+      val pc = PitchClass.streamBackward(a.pitchClass).apply((-ic) - 1)
+
+      val oct = PitchClass.streamBackward(a.pitchClass).take(-ic).toList.sliding(2,1).count(
+        x => x == List(C,B))
+
+      //TODO: Natural in some cases (implicit Mode)
+      val pcTones = a.midiNumber - Pitch(pc,PitchDecorator.None,a.octave-oct).midiNumber
+      val dec = PitchDecorator((this.semitones) + pcTones)
+
+      return Pitch(pc, dec, a.octave-oct)
+    }
   }
 
   def invert: Interval = Interval(9-ic, quality.invert)
