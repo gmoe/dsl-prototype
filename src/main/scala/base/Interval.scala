@@ -2,7 +2,7 @@ package rc.dsl
 
 import Primitives._
 
-case class Interval(val ic: Int, val quality: IntervalQuality) {
+case class Interval(val ic: Int, val quality: IntervalQuality) extends IsEnharmonic[Interval] {
   import PitchClass._, PitchDecorator._, IntervalQuality._, Math.abs
   require(ic <= 15 && ic >= -15,
     "Interval must have a valid class (-15 <= ic <= 15)")
@@ -70,6 +70,7 @@ case class Interval(val ic: Int, val quality: IntervalQuality) {
   def invert: Interval = Interval(9-ic, quality.invert)
   def negate: Interval = Interval(-ic, quality)
   def unary_- = negate
+  def isEnharmonic(that: Interval): Boolean = this.semitones == that.semitones
 }
 
 object Interval {
@@ -91,6 +92,7 @@ object Interval {
     case 11 | 23 => Major
   }
 
+  //TODO: Does not support negative or compound intervals
   def apply(a: Pitch, b: Pitch): Interval = {
     val hi = List(a,b).max
     val lo = List(a,b).min
