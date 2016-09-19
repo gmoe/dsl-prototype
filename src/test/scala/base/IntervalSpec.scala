@@ -64,6 +64,29 @@ class IntervalSpec extends FlatSpec with Matchers {
     assert(Interval(-8, Perfect) ~= Interval(-9, Diminished))
   }
 
+  it should "create general Intervals from semitone gaps" in {
+    Interval(12) should be (Interval(8, Perfect))
+    Interval(7) should be (Interval(5, Perfect))
+    Interval(4) should be (Interval(3, Major))
+    Interval(1) should be (Interval(2, Minor))
+
+    Interval(24) should be (Interval(15, Perfect))
+    Interval(19) should be (Interval(12, Perfect))
+    Interval(14) should be (Interval(9, Major))
+    Interval(13) should be (Interval(9, Minor))
+
+    Interval(-2) should be (Interval(-2, Major))
+    Interval(-12) should be (Interval(-8, Perfect))
+  }
+
+  it should "match enharmonic Intervals" in {
+    assert(Interval(3, Major) ~= Interval(4, Diminished))
+    assert(Interval(6, Minor) ~= Interval(5, Augmented))
+    assert(Interval(4, Augmented) ~= Interval(5, Diminished))
+    assert(Interval(12, Perfect) ~= Interval(13, Diminished))
+    assert(Interval(-8, Perfect) ~= Interval(-9, Diminished))
+  }
+
   "Unison" should "create correct notes" in {
     val P1 = Interval(1, Perfect)
     P1.fromPitch(Pitch(C,None,4)) should be (Pitch(C,None,4))
