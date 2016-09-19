@@ -18,7 +18,7 @@ class IntervalSpec extends FlatSpec with Matchers {
     Interval(6,Augmented).invert should be (Interval(3,Diminished))
   }
 
-  it should "create correct Intervals from two Pitches" in {
+  it should "create correct Intervals from two ascending Pitches" in {
     Interval(Pitch(C,None,4), Pitch(C,None,5)) should be (Interval(8, Perfect))
     Interval(Pitch(C,None,4), Pitch(C,None,4)) should be (Interval(1, Perfect))
     Interval(Pitch(C,None,4), Pitch(D,None,4)) should be (Interval(2, Major))
@@ -26,6 +26,19 @@ class IntervalSpec extends FlatSpec with Matchers {
 
     Interval(Pitch(B,Flat,4), Pitch(G,None,5)) should be (Interval(6, Major))
     Interval(Pitch(B,Flat,4), Pitch(F,None,5)) should be (Interval(5, Perfect))
+    Interval(Pitch(C,Sharp,4), Pitch(E,None,4)) should be (Interval(3,Minor))
+    Interval(Pitch(F,Sharp,4), Pitch(A,Sharp,4)) should be (Interval(3,Major))
+
+    Interval(Pitch(D,None,4), Pitch(D,None,6)) should be (Interval(15,Perfect))
+    Interval(Pitch(C,None,4), Pitch(G,None,5)) should be (Interval(12,Perfect))
+    Interval(Pitch(C,None,4), Pitch(D,Flat,5)) should be (Interval(9,Minor))
+    Interval(Pitch(E,None,4), Pitch(D,None,6)) should be (Interval(14,Minor))
+  }
+
+  it should "create correct Intervals from two descending Pitches" in {
+    Interval(Pitch(D,None,4), Pitch(D,None,3)) should be (Interval(-8, Perfect))
+    Interval(Pitch(C,None,4), Pitch(B,Flat,3)) should be (Interval(-2, Major))
+    Interval(Pitch(F,None,4), Pitch(C,None,4)) should be (Interval(-4, Perfect))
   }
 
   it should "create general Intervals from semitone gaps" in {

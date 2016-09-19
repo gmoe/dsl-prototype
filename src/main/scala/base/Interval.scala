@@ -92,20 +92,18 @@ object Interval {
     case 11 | 23 => Major
   }
 
-  //TODO: Does not support negative or compound intervals
-  def apply(a: Pitch, b: Pitch): Interval = {
-    val hi = List(a,b).max
-    val lo = List(a,b).min
+  def apply(from: Pitch, to: Pitch): Interval = {
+    val direction = if(from > to) -1 else 1
+    val hi = List(from,to).max
+    val lo = List(from,to).min
 
     val ic = {
-      if (a == b) 1 
-      else if(a.pitchClass == b.pitchClass && hi.octave > lo.octave) 8
-      else PitchClass.streamForward(lo.pitchClass).indexOf(hi.pitchClass)+1
+      if (hi.pitchClass == lo.pitchClass) 7 * (hi.octave-lo.octave) + 1
+      else PitchClass.streamForward(lo.pitchClass).indexOf(hi.pitchClass,
+        ((hi.midiNumber-lo.midiNumber)/12)*7)+1
     }
 
-    val quality = findQuality(hi.midiNumber - lo.midiNumber)
-
-    Interval(ic, quality) 
+    Interval(ic * direction, findQuality(hi.midiNumber - lo.midiNumber)) 
   }
 
   def apply(i: Int): Interval = {
