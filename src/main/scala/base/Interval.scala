@@ -67,7 +67,7 @@ case class Interval(val ic: Int, val quality: IntervalQuality) extends IsEnharmo
     }
   }
 
-  def invert: Interval = Interval(9-ic, quality.invert)
+  def invert: Interval = Interval((Math.abs(ic)/ic) * (9 - Math.abs(ic) % 7), quality.invert)
   def negate: Interval = Interval(-ic, quality)
   def unary_- = negate
   def isEnharmonic(that: Interval): Boolean = this.semitones == that.semitones
