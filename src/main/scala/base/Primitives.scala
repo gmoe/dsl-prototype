@@ -1,5 +1,7 @@
 package rc.dsl
 
+import scala.math._
+
 object Primitives {
 
   trait Music
@@ -84,6 +86,15 @@ object Primitives {
     def midiNumber = octave * 12 + pitchClass.midiNumber + decorator.midiNumber
     def compare(that: Pitch) = this.midiNumber - that.midiNumber
     def isEnharmonic(that: Pitch) = this.midiNumber == that.midiNumber
+    def frequency(implicit t: Temperament = EqualTemperament(440)): Double = t.frequency(this)
+  }
+
+  trait Temperament {
+    def frequency(p: Pitch): Double
+  }
+  case class EqualTemperament(refA: Double) extends Temperament {
+    def frequency(p: Pitch): Double = BigDecimal(refA*pow(pow(2d, 1d/12d),
+      p.midiNumber-57)).setScale(4, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
   final case class RomanPitch(val romanNum: RomanNum, override val decorator: PitchDecorator,

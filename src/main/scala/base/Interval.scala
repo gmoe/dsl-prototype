@@ -2,9 +2,11 @@ package rc.dsl
 
 import Primitives._
 
-case class Interval(val ic: Int, val quality: IntervalQuality) extends IsEnharmonic[Interval] {
+case class Interval(val ic: Int, val quality: IntervalQuality) extends Function1[Pitch, Pitch]
+  with IsEnharmonic[Interval] {
+
   import PitchClass._, PitchDecorator._, IntervalQuality._, Math.abs
-  require(ic <= 15 && ic >= -15,
+  require(ic <= 15 && ic >= -15 && ic != 0,
     "Interval must have a valid class (-15 <= ic <= 15)")
   require(if(quality==Perfect)
     ic==1||abs(ic)==4||abs(ic)==5||abs(ic)==8||abs(ic)==11||abs(ic)==12||abs(ic)==15 else true,
@@ -67,6 +69,7 @@ case class Interval(val ic: Int, val quality: IntervalQuality) extends IsEnharmo
     }
   }
 
+  def apply(p: Pitch): Pitch = this.fromPitch(p)
   def invert: Interval = Interval((Math.abs(ic)/ic) * (9 - Math.abs(ic) % 7), quality.invert)
   def negate: Interval = Interval(-ic, quality)
   def unary_- = negate

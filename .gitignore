@@ -21,4 +21,5 @@ explore/
 # Vim specific
 *.swp
 *.swo
+*.swn
 *.bak

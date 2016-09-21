@@ -39,4 +39,8 @@ object Structures {
 
   }
 
+
+  def thread[A,B <: Function1[A,A]](a: A)(xs: List[B]): List[A] =
+    xs.foldLeft(List(a))( (list, b) => list :+ b.apply(list.last) )
+
 }
