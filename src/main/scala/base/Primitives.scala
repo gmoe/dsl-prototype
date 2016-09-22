@@ -92,6 +92,7 @@ object Primitives {
   trait Temperament {
     def frequency(p: Pitch): Double
   }
+
   case class EqualTemperament(refA: Double) extends Temperament {
     def frequency(p: Pitch): Double = BigDecimal(refA*pow(pow(2d, 1d/12d),
       p.midiNumber-57)).setScale(4, BigDecimal.RoundingMode.HALF_UP).toDouble

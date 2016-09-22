@@ -1,7 +1,7 @@
 # Music DSL Prototype
 
-This is a Scala embedded DSL for composing and transforming music, which aims
-to be expressive and intuitive for non-programmers.
+This is a prototype Scala-embedded DSL for composing and transforming music,
+which aims to be expressive and intuitive for non-programmers.
 
 ##Examples
 
@@ -16,17 +16,23 @@ import RomanNum._
 scala> C`_`4
 res0: rc.dsl.Primitives.Pitch = C₄
 
+scala> (F`#`4) != (G`b`4)
+res1: Boolean = true
+
+scala> (F`#`4).isEnharmonic(G`b`4) // can also use (F`#`4) ~= (G`b`4)
+res2: Boolean = true
+
 scala> val cMajor = Ionian(res0)
 cMajor: rc.dsl.Ionian = Ionian(C)
 
 scala> val fSharpMajor = Ionian(F`#`4)
 fSharpMajor: rc.dsl.Ionian = Ionian(F♯)
 
-scala> fSharpMajor.to compose cMajor.from
-res1: rc.dsl.Primitives.Pitch => rc.dsl.Primitives.Pitch = <function1>
+scala> val modulate = fSharpMajor.to compose cMajor.from
+modulate: rc.dsl.Primitives.Pitch => rc.dsl.Primitives.Pitch = <function1>
 
-scala> res1(D`#`4)
-res2: rc.dsl.Primitives.Pitch = G𝄪₄
+scala> modulate(D`#`4)
+res3: rc.dsl.Primitives.Pitch = G𝄪₄
 ```
 
 Another goal of this DSL is to be able to start from small ideas, like a
@@ -45,4 +51,18 @@ notes: List[rc.dsl.Primitives.Note] = List(Note(C₄,Quarter), Note(E₄,Quarter
 
 scala> val measure = Measure(TimeSignature(3,4), notes:_*)
 measure: rc.dsl.Structures.Measure = Measure(TimeSignature(3,4),List(Note(C₄,Quarter), Note(E₄,Quarter), Note(G₄,Eighth), Note(B₄,Eighth)))
+```
+
+Here is another example of functional composition, which threads a starting
+pitch through a sequence of musical intervals:
+
+```scala
+scala> import IntervalQuality._
+import IntervalQuality._
+
+scala> val steps = List(Interval(2,Major), Interval(5,Perfect), Interval(-3, Minor), Interval(2,Minor))
+steps: List[rc.dsl.Interval] = List(M2, P5, -m3, m2)
+
+scala> val melody = thread(C`_`4)(steps)
+melody: List[rc.dsl.Primitives.Pitch] = List(C₄, D₄, A₄, F♯₄, G₄)
 ```
