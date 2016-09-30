@@ -186,15 +186,15 @@ object Primitives {
       def midiNumber: Int = 0
     }
     final case object Natural extends PitchDecorator {
-      override def toString = "♮"
+      override def toString = "♮ "
       def midiNumber: Int = 0
     }
     final case object Sharp extends PitchDecorator {
-      override def toString = "♯"
+      override def toString = "♯ "
       def midiNumber: Int = 1
     }
     final case object Flat extends PitchDecorator {
-      override def toString = "♭"
+      override def toString = "♭ "
       def midiNumber: Int = -1
     }
     final case object DoubleSharp extends PitchDecorator {
@@ -228,6 +228,7 @@ object Primitives {
 
   }
 
+  //TODO: Can these implicits be generalized? Duplication of effort...
   implicit class PitchBuilder(val pc: PitchClass) extends AnyVal {
     def `bb`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.DoubleFlat, oct)
     def `b`(oct: Integer): Pitch = Pitch(this.pc, PitchDecorator.Flat, oct)

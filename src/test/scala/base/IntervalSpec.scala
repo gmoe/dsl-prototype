@@ -83,81 +83,86 @@ class IntervalSpec extends FlatSpec with Matchers {
     assert(Interval(-8, Perfect) ~= Interval(-9, Diminished))
   }
 
+  it should "use modes to determine natural notes" in {
+    val P5 = Interval(5, Perfect)
+    P5(B`b`4)(Ionian(B`_`4)) should be (F`n`5)
+  }
+
   "Unison" should "create correct notes" in {
     val P1 = Interval(1, Perfect)
-    P1.fromPitch(Pitch(C,None,4)) should be (Pitch(C,None,4))
-    P1.fromPitch(Pitch(D,None,4)) should be (Pitch(D,None,4))
-    P1.fromPitch(Pitch(E,Flat,4)) should be (Pitch(E,Flat,4))
-    P1.fromPitch(Pitch(F,Sharp,4)) should be (Pitch(F,Sharp,4))
-    P1.fromPitch(Pitch(G,DoubleSharp,4)) should be (Pitch(G,DoubleSharp,4))
-    P1.fromPitch(Pitch(A,DoubleFlat,4)) should be (Pitch(A,DoubleFlat,4))
+    P1(Pitch(C,None,4)) should be (Pitch(C,None,4))
+    P1(Pitch(D,None,4)) should be (Pitch(D,None,4))
+    P1(Pitch(E,Flat,4)) should be (Pitch(E,Flat,4))
+    P1(Pitch(F,Sharp,4)) should be (Pitch(F,Sharp,4))
+    P1(Pitch(G,DoubleSharp,4)) should be (Pitch(G,DoubleSharp,4))
+    P1(Pitch(A,DoubleFlat,4)) should be (Pitch(A,DoubleFlat,4))
   }
 
   "Major second" should "result in correct notes" in {
     val M2 = Interval(2, Major)
-    M2.fromPitch(Pitch(C,None,4)) should be (Pitch(D,None,4))
-    M2.fromPitch(Pitch(A,None,4)) should be (Pitch(B,None,4))
-    M2.fromPitch(Pitch(G,Sharp,4)) should be (Pitch(A,Sharp,4))
-    M2.fromPitch(Pitch(D,Flat,4)) should be (Pitch(E,Flat,4))
-    M2.fromPitch(Pitch(E,None,4)) should be (Pitch(F,Sharp,4))
-    M2.fromPitch(Pitch(B,Flat,4)) should be (Pitch(C,None,5))
-    M2.fromPitch(Pitch(B,None,4)) should be (Pitch(C,Sharp,5))
+    M2(Pitch(C,None,4)) should be (Pitch(D,None,4))
+    M2(Pitch(A,None,4)) should be (Pitch(B,None,4))
+    M2(Pitch(G,Sharp,4)) should be (Pitch(A,Sharp,4))
+    M2(Pitch(D,Flat,4)) should be (Pitch(E,Flat,4))
+    M2(Pitch(E,None,4)) should be (Pitch(F,Sharp,4))
+    M2(Pitch(B,Flat,4)) should be (Pitch(C,None,5))
+    M2(Pitch(B,None,4)) should be (Pitch(C,Sharp,5))
 
-    M2.fromPitch(Pitch(E,Sharp,4)) should be (Pitch(F,DoubleSharp,4))
-    M2.fromPitch(Pitch(B,Sharp,4)) should be (Pitch(C,DoubleSharp,5))
+    M2(Pitch(E,Sharp,4)) should be (Pitch(F,DoubleSharp,4))
+    M2(Pitch(B,Sharp,4)) should be (Pitch(C,DoubleSharp,5))
   }
 
   "Major third" should "result in correct notes" in {
     val M3 = Interval(3, Major)
-    M3.fromPitch(Pitch(C,None,4)) should be (Pitch(E,None,4))
-    M3.fromPitch(Pitch(D,None,4)) should be (Pitch(F,Sharp,4))
-    M3.fromPitch(Pitch(C,Sharp,4)) should be (Pitch(E,Sharp,4))
-    M3.fromPitch(Pitch(B,Flat,4)) should be (Pitch(D,None,5))
-    M3.fromPitch(Pitch(E,None,4)) should be (Pitch(G,Sharp,4))
+    M3(Pitch(C,None,4)) should be (Pitch(E,None,4))
+    M3(Pitch(D,None,4)) should be (Pitch(F,Sharp,4))
+    M3(Pitch(C,Sharp,4)) should be (Pitch(E,Sharp,4))
+    M3(Pitch(B,Flat,4)) should be (Pitch(D,None,5))
+    M3(Pitch(E,None,4)) should be (Pitch(G,Sharp,4))
 
-    M3.fromPitch(Pitch(E,Sharp,4)) should be (Pitch(G,DoubleSharp,4))
+    M3(Pitch(E,Sharp,4)) should be (Pitch(G,DoubleSharp,4))
   }
 
   "Perfect fifth" should "result in correct notes" in {
     val P5 = Interval(5, Perfect)
-    P5.fromPitch(Pitch(C,None,4)) should be (Pitch(G,None,4))
-    P5.fromPitch(Pitch(D,Sharp,4)) should be (Pitch(A,Sharp,4))
-    P5.fromPitch(Pitch(E,Flat,4)) should be (Pitch(B,Flat,4))
-    P5.fromPitch(Pitch(F,None,4)) should be (Pitch(C,None,5))
+    P5(Pitch(C,None,4)) should be (Pitch(G,None,4))
+    P5(Pitch(D,Sharp,4)) should be (Pitch(A,Sharp,4))
+    P5(Pitch(E,Flat,4)) should be (Pitch(B,Flat,4))
+    P5(Pitch(F,None,4)) should be (Pitch(C,None,5))
 
-    P5.fromPitch(Pitch(B,Flat,4)) should be (Pitch(F,None,5))
-    P5.fromPitch(Pitch(B,None,4)) should be (Pitch(F,Sharp,5))
+    P5(Pitch(B,Flat,4)) should be (Pitch(F,None,5))
+    P5(Pitch(B,None,4)) should be (Pitch(F,Sharp,5))
   }
 
   "Diminished fifth" should "result in correct notes" in {
     val d5 = Interval(5, Diminished)
-    d5.fromPitch(C`_`4) should be (G`b`4)
-    d5.fromPitch(B`b`4) should be (F`b`5)
-    d5.fromPitch(F`b`4) should be (C`bb`5)
-    d5.fromPitch(D`b`4) should be (A`bb`4)
-    d5.fromPitch(E`x`4) should be (B`#`4)
+    d5(C`_`4) should be (G`b`4)
+    d5(B`b`4) should be (F`b`5)
+    d5(F`b`4) should be (C`bb`5)
+    d5(D`b`4) should be (A`bb`4)
+    d5(E`x`4) should be (B`#`4)
   }
 
   "Perfect 12th" should "result in correct notes" in {
     val P12 = Interval(12, Perfect)
-    P12.fromPitch(C`_`4) should be (G`_`5)
-    P12.fromPitch(E`b`4) should be (B`b`5)
-    P12.fromPitch(D`#`4) should be (A`#`5)
+    P12(C`_`4) should be (G`_`5)
+    P12(E`b`4) should be (B`b`5)
+    P12(D`#`4) should be (A`#`5)
 
-    P12.fromPitch(F`_`4) should be (C`_`6)
-    P12.fromPitch(B`b`4) should be (F`_`6)
-    P12.fromPitch(B`_`4) should be (F`#`6)
+    P12(F`_`4) should be (C`_`6)
+    P12(B`b`4) should be (F`_`6)
+    P12(B`_`4) should be (F`#`6)
   }
 
   "Negative major second" should "result in correct notes" in {
     val negM2 = Interval(-2, Major)
-    negM2.fromPitch(D`_`4) should be (C`_`4)
-    negM2.fromPitch(E`b`4) should be (D`b`4)
-    negM2.fromPitch(G`#`4) should be (F`#`4)
+    negM2(D`_`4) should be (C`_`4)
+    negM2(E`b`4) should be (D`b`4)
+    negM2(G`#`4) should be (F`#`4)
 
-    negM2.fromPitch(C`_`4) should be (B`b`3)
-    negM2.fromPitch(C`#`4) should be (B`_`3)
-    negM2.fromPitch(C`b`4) should be (B`bb`3)
+    negM2(C`_`4) should be (B`b`3)
+    negM2(C`#`4) should be (B`_`3)
+    negM2(C`b`4) should be (B`bb`3)
   }
 
 }

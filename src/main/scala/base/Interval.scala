@@ -2,8 +2,7 @@ package rc.dsl
 
 import Primitives._
 
-case class Interval(val ic: Int, val quality: IntervalQuality) extends Function1[Pitch, Pitch]
-  with IsEnharmonic[Interval] {
+case class Interval(val ic: Int, val quality: IntervalQuality) extends IsEnharmonic[Interval] {
 
   import PitchClass._, PitchDecorator._, IntervalQuality._, Math.abs
   require(ic <= 15 && ic >= -15 && ic != 0,
@@ -50,9 +49,9 @@ case class Interval(val ic: Int, val quality: IntervalQuality) extends Function1
       val oct = PitchClass.streamForward(a.pitchClass).take(ic).toList.sliding(2,1).count(
         x => x == List(B,C))
 
-      //TODO: Natural in some cases (implicit Mode)
-      val pcTones = Pitch(pc,PitchDecorator.None,oct+a.octave).midiNumber - a.midiNumber
-      val dec = PitchDecorator(this.semitones - pcTones)
+      val pcTones = Pitch(pc,None,oct+a.octave).midiNumber - a.midiNumber
+      var dec = PitchDecorator(this.semitones - pcTones)
+
 
       return Pitch(pc, dec, a.octave+oct)
     } else {
@@ -61,15 +60,20 @@ case class Interval(val ic: Int, val quality: IntervalQuality) extends Function1
       val oct = PitchClass.streamBackward(a.pitchClass).take(-ic).toList.sliding(2,1).count(
         x => x == List(C,B))
 
-      //TODO: Natural in some cases (implicit Mode)
-      val pcTones = a.midiNumber - Pitch(pc,PitchDecorator.None,a.octave-oct).midiNumber
-      val dec = PitchDecorator((this.semitones) + pcTones)
+      val pcTones = a.midiNumber - Pitch(pc,None,a.octave-oct).midiNumber
+      var dec = PitchDecorator((this.semitones) + pcTones)
 
       return Pitch(pc, dec, a.octave-oct)
     }
   }
 
-  def apply(p: Pitch): Pitch = this.fromPitch(p)
+  def apply(p: Pitch)(implicit m: Mode = Ionian(C`_`4)): Pitch = {
+    val targetPitch = this.fromPitch(p)
+    val modePitch = m.from(targetPitch)
+    if(targetPitch.decorator == None && modePitch.decorator != None) {
+      Pitch(targetPitch.pitchClass, Natural, targetPitch.octave)
+    } else { targetPitch }
+  }
   def invert: Interval = Interval((Math.abs(ic)/ic) * (9 - Math.abs(ic) % 7), quality.invert)
   def negate: Interval = Interval(-ic, quality)
   def unary_- = negate
