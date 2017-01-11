@@ -87,6 +87,8 @@ object Primitives {
     def compare(that: Pitch) = this.midiNumber - that.midiNumber
     def isEnharmonic(that: Pitch) = this.midiNumber == that.midiNumber
     def frequency(implicit t: Temperament = EqualTemperament(440)): Double = t.frequency(this)
+    def +(i: Integer): Pitch = Interval(i).fromPitch(this)
+    def -(i: Integer): Pitch = Interval(-i).fromPitch(this)
   }
 
   trait Temperament {
@@ -260,4 +262,5 @@ object Primitives {
     def sharp(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.Sharp, oct)
     def sharp2(oct: Integer): RomanPitch = RomanPitch(this.rn, PitchDecorator.DoubleSharp, oct)
   }
+
 }
