@@ -61,6 +61,7 @@ class IntervalSpec extends FlatSpec with Matchers {
   }
 
   it should "create general Intervals from semitone gaps" in {
+    Interval(0) should be (Interval(1, Perfect))
     Interval(12) should be (Interval(8, Perfect))
     Interval(7) should be (Interval(5, Perfect))
     Interval(4) should be (Interval(3, Major))
@@ -86,6 +87,7 @@ class IntervalSpec extends FlatSpec with Matchers {
   it should "use modes to determine natural notes" in {
     val P5 = Interval(5, Perfect)
     P5(B`b`4)(Ionian(B`_`4)) should be (F`n`5)
+    P5(C`_`4)(Ionian(C`#`4)) should be (G`n`4)
   }
 
   "Unison" should "create correct notes" in {

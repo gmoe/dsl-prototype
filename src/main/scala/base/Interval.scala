@@ -2,7 +2,8 @@ package rc.dsl
 
 import Primitives._
 
-case class Interval(val ic: Int, val quality: IntervalQuality) extends IsEnharmonic[Interval] {
+case class Interval(val ic: Int, val quality: IntervalQuality) extends
+  IsEnharmonic[Interval] {
 
   import PitchClass._, PitchDecorator._, IntervalQuality._, Math.abs
   require(ic <= 15 && ic >= -15 && ic != 0,
@@ -115,22 +116,12 @@ object Interval {
 
   def apply(i: Int): Interval = {
     require(-24 <= i && i <= 24, "Interval steps in semitones must be between -24 and 24.") 
+    if(i == 0) return Interval(1, Perfect)
     val ic = Math.abs(i) match {
-      case 0 => 1
-      case 1 | 2 => 2
-      case 3 | 4 => 3
-      case 5 => 4
-      case 6 | 7 => 5
-      case 8 | 9 => 6
-      case 10 | 11 => 7
-      case 12 => 8
-      case 13 | 14 => 9
-      case 15 | 16 => 10
-      case 17 => 11
-      case 18 | 19 => 12
-      case 20 | 21 => 13
-      case 22 | 23 => 14
-      case 24 => 15
+      case 1 | 2 => 2; case 3 | 4 => 3; case 5 => 4; case 6 | 7 => 5;
+      case 8 | 9 => 6; case 10 | 11 => 7; case 12 => 8; case 13 | 14 => 9;
+      case 15 | 16 => 10; case 17 => 11; case 18 | 19 => 12; case 20 | 21 => 13;
+      case 22 | 23 => 14; case 24 => 15
     }
     Interval(ic * (i / Math.abs(i)), findQuality(i))
   }
