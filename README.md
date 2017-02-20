@@ -1,9 +1,12 @@
 # Music DSL Prototype
 
-This is a prototype Scala-embedded DSL for composing and transforming music,
-which aims to be expressive and intuitive for non-programmers.
+This is a prototype Scala-embedded domain specific language for composing and
+transforming music, which aims to be expressive and intuitive for
+non-programmers. The DSL also contains generative modules that can be pulled in
+by the composer when necessary, such as Xenakis sieves and Markov chains.
+Examples of these can be found in the [wiki][docs].
 
-##Examples
+## Examples
 
 Here is a use case demonstrating how to create modulations from one key to
 another using function composition:
@@ -66,3 +69,7 @@ steps: List[rc.dsl.Interval] = List(M2, P5, -m3, m2)
 scala> val melody = thread(C`_`4)(steps)
 melody: List[rc.dsl.Primitives.Pitch] = List(C₄, D₄, A₄, F♯₄, G₄)
 ```
+
+Examples for additional DSL modules can be found in the [wiki][docs].
+
+[docs]: https://github.com/gmoe/dsl-prototype/wiki
